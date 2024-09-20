@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"> <!-- 设置字符编码为UTF-8 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 设置视口以适应不同设备 -->
+  <title>Calculator</title> <!-- 网页标题 -->
+  <style>
+    body {
+      display: flex; /* 使用flexbox布局 */
+      justify-content: center; /* 在水平方向居中对齐 */
+      align-items: center; /* 在垂直方向居中对齐 */
+      height: 100vh; /* 高度占满整个视口 */
+      background-color: #e8f0f2; /* 背景颜色 */
+      margin: 0; /* 去掉默认的外边距 */
+      font-family: 'Roboto', sans-serif; /* 设置字体 */
+    }
+
+    .calculator-wrapper {
+      text-align: center; /* 计算器内容居中 */
+    }
+
+    h1 {
+      font-size: 28px; /* 标题字体大小 */
+      margin-bottom: 20px; /* 标题与计算器之间的间距 */
+      color: #333; /* 字体颜色 */
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* 文字阴影 */
+    }
+
+    .calculator {
+      background-color: #ffffff; /* 计算器背景颜色 */
+      padding: 20px; /* 内边距 */
+      border-radius: 15px; /* 圆角边框 */
+      box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+      width: 100%; /* 宽度100% */
+      max-width: 400px; /* 最大宽度限制 */
+      box-sizing: border-box; /* 包含内边距和边框在内的宽度计算 */
+    }
+
+    #display {
+      width: 100%; /* 输入框宽度100% */
+      height: 85px; /* 输入框高度 */
+      font-size: 32px; /* 输入框字体大小 */
+      text-align: right; /* 输入框文本右对齐 */
+      margin-bottom: 20px; /* 输入框与按钮之间的间距 */
+      padding: 15px; /* 输入框内边距 */
+      border: none; /* 去掉边框 */
+      background-color: #f3f4f6; /* 输入框背景颜色 */
+      border-radius: 8px; /* 输入框圆角 */
+      outline: none; /* 去掉焦点边框 */
+      resize: none; /* 禁止调整大小 */
+      color: #333; /* 输入框字体颜色 */
+      font-weight: bold; /* 输入框字体加粗 */
+      caret-color: transparent; /* 隐藏光标 */
+      overflow: hidden; /* 隐藏溢出内容 */
+      box-sizing: border-box; /* 包含内边距在内的宽度计算 */
+    }
+
+    .buttons {
+      display: grid; /* 使用网格布局 */
+      grid-template-columns: repeat(4, 1fr); /* 设置四列 */
+      gap: 15px; /* 按钮之间的间距 */
+    }
+
+    .btn {
+      background: linear-gradient(145deg, #d3d4db, #ffffff); /* 按钮背景渐变 */
+      box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2), -5px -5px 10px #ffffff; /* 按钮阴影效果 */
+      border: none; /* 去掉边框 */
+      padding: 20px; /* 按钮内边距 */
+      font-size: 24px; /* 按钮字体大小 */
+      border-radius: 10px; /* 按钮圆角 */
+      cursor: pointer; /* 鼠标悬停时变为手指 */
+      transition: transform 0.1s, box-shadow 0.1s; /* 添加动画效果 */
+      font-weight: bold; /* 按钮字体加粗 */
+      color: #333; /* 按钮字体颜色 */
+    }
+
+    .btn:hover {
+      transform: scale(1.05); /* 鼠标悬停时放大效果 */
+      box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.2), -3px -3px 7px #ffffff; /* 鼠标悬停时阴影效果 */
+    }
+
+    .equal {
+      background-color: #4caf50; /* 等号按钮背景颜色 */
+      color: white; /* 等号按钮字体颜色 */
+    }
+
+    .equal:hover {
+      background-color: #45a049; /* 鼠标悬停时等号按钮背景颜色 */
+    }
+
+    .zero {
+      grid-column: span 2; /* 0按钮占据两列 */
+    }
+
+    .btn.operation {
+      background-color: #f39c12; /* 运算符按钮背景颜色 */
+      color: white; /* 运算符按钮字体颜色 */
+    }
+
+    .btn.operation:hover {
+      background-color: #e67e22; /* 鼠标悬停时运算符按钮背景颜色 */
+    }
+
+    .clear, .delete {
+      background-color: #e74c3c; /* 清除和删除按钮背景颜色 */
+      color: white; /* 清除和删除按钮字体颜色 */
+    }
+
+    .clear:hover, .delete:hover {
+      background-color: #c0392b; /* 鼠标悬停时清除和删除按钮背景颜色 */
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator-wrapper">
+    <h1>计算器</h1> <!-- 标题 -->
+    <div class="calculator">
+      <textarea id="display" disabled></textarea> <!-- 输入框，disabled表示不可编辑 -->
+      <div class="buttons"> <!-- 按钮容器 -->
+        <button class="btn clear" onclick="clearDisplay()">C</button> <!-- 清除按钮 -->
+        <button class="btn delete" onclick="deleteLast()">←</button> <!-- 删除按钮 -->
+        <button class="btn" onclick="appendToDisplay('%')">%</button> <!-- 百分号按钮 -->
+        <button class="btn operation" onclick="appendToDisplay('÷')">÷</button> <!-- 除法按钮 -->
+
+        <button class="btn" onclick="appendToDisplay('7')">7</button> <!-- 数字按钮7 -->
+        <button class="btn" onclick="appendToDisplay('8')">8</button> <!-- 数字按钮8 -->
+        <button class="btn" onclick="appendToDisplay('9')">9</button> <!-- 数字按钮9 -->
+        <button class="btn operation" onclick="appendToDisplay('×')">×</button> <!-- 乘法按钮 -->
+
+        <button class="btn" onclick="appendToDisplay('4')">4</button> <!-- 数字按钮4 -->
+        <button class="btn" onclick="appendToDisplay('5')">5</button> <!-- 数字按钮5 -->
+        <button class="btn" onclick="appendToDisplay('6')">6</button> <!-- 数字按钮6 -->
+        <button class="btn operation" onclick="appendToDisplay('-')">−</button> <!-- 减法按钮 -->
+
+        <button class="btn" onclick="appendToDisplay('1')">1</button> <!-- 数字按钮1 -->
+        <button class="btn" onclick="appendToDisplay('2')">2</button> <!-- 数字按钮2 -->
+        <button class="btn" onclick="appendToDisplay('3')">3</button> <!-- 数字按钮3 -->
+        <button class="btn operation" onclick="appendToDisplay('+')">+</button> <!-- 加法按钮 -->
+
+        <button class="btn zero" onclick="appendToDisplay('0')">0</button> <!-- 数字按钮0 -->
+        <button class="btn" onclick="appendToDisplay('.')">.</button> <!-- 小数点按钮 -->
+        <button class="btn equal" onclick="calculate()">=</button> <!-- 等号按钮 -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentExpression = ''; // 初始化当前表达式为空字符串
+
+    function appendToDisplay(value) {
+      currentExpression += value; // 将点击的按钮值添加到当前表达式
+      document.getElementById('display').value = currentExpression; // 更新显示框的内容
+    }
+
+    function clearDisplay() {
+      currentExpression = ''; // 清空当前表达式
+      document.getElementById('display').value = ''; // 清空显示框
+    }
+
+    function deleteLast() {
+      currentExpression = currentExpression.slice(0, -1); // 删除当前表达式的最后一个字符
+      document.getElementById('display').value = currentExpression; // 更新显示框的内容
+    }
+
+    function calculate() {
+      let display = document.getElementById('display'); // 获取显示框元素
+      let expression = currentExpression; // 当前表达式
+
+      // 处理百分号，将其转换为除以100的形式
+      expression = expression.replace(/(\d+)%/g, (match, number) => `${number}/100`);
+      // 替换乘法和除法符号为JavaScript支持的符号
+      expression = expression.replace(/×/g, '*').replace(/÷/g, '/');
+
+      try {
+        let result = eval(expression); // 计算表达式的值
+        display.value = currentExpression + '\n' + result; // 显示当前表达式和结果
+        currentExpression = result.toString(); // 更新当前表达式为结果
+      } catch {
+        display.value = 'Error'; // 捕获错误并显示"Error"
+        currentExpression = ''; // 清空当前表达式
+      }
+    }
+  </script>
+</body>
+</html>
